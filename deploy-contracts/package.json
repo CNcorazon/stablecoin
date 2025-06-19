@@ -1,0 +1,30 @@
+{
+  "name": "gtja-coin",
+  "scripts": {
+    "test": "jest",
+    "run-deploy-local": "hardhat run scripts/deploy.js --network localhost",
+    "run-mint": "hardhat run scripts/mint.js --network localhost",
+    "run-interact": "hardhat run scripts/interact.js --network localhost",
+    "run-deploy-sepolia": "hardhat run scripts/deploy.js --network sepolia",
+    "run-mint-sepolia": "hardhat run scripts/mint.js --network sepolia",
+    "run-interact-sepolia": "hardhat run scripts/interact.js --network sepolia",
+    "run-app-sepolia": "hardhat run app.js --network sepolia"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-ethers": "^3.0.9",
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "chai": "^4.3.7",
+    "ethers": "^6.14.3",
+    "hardhat": "^2.24.2",
+    "jest": "^30.0.0",
+    "mocha": "^11.6.0",
+    "supertest": "^7.1.1"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.3.0",
+    "axios": "^1.10.0",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "https-proxy-agent": "^7.0.6"
+  }
+}
