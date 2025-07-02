@@ -23,7 +23,7 @@ RUN addgroup -g 1001 -S nodejs && \
 USER nodejs
 
 # 暴露端口
-EXPOSE 3001
+EXPOSE 3000
 
 # 简化的健康检查（使用Node.js）
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
