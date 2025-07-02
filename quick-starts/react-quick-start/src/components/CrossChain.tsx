@@ -13,7 +13,7 @@ import {
 // 🆕 使用与AdminPanel相同的交易查询函数
 const queryTransactionStatus = async (txHash: string, network: string) => {
     const baseUrl = process.env.NODE_ENV === 'production'
-        ? "https://your-api-domain.com"
+        ? "/api"
         : "http://localhost:3000";
     const url = `${baseUrl}/tx/${txHash}?network=${network}`;
 

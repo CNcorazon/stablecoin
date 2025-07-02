@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 // 🆕 交易状态查询函数
 const queryTransactionStatus = async (txHash: string, network: string) => {
     const baseUrl = process.env.NODE_ENV === 'production'
-        ? "https://your-api-domain.com"
+        ? "url"
         : "http://localhost:3000";
     const url = `${baseUrl}/tx/${txHash}?network=${network}`;
 

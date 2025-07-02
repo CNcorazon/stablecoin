@@ -1,0 +1,41 @@
+# web3auth-pnp-examples/docker-compose.yml
+version: '3.8'
+
+services:
+  # 后端服务（仅内部访问）
+  backend:
+    build:
+      context: ./deploy-contracts
+      dockerfile: Dockerfile
+    container_name: xd-backend
+    restart: unless-stopped
+    # 🔒 移除端口暴露，只在内部网络可访问
+    # ports:
+    #   - "3001:3001"  # 删除这行
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+    env_file:
+      - ./deploy-contracts/.env
+    volumes:
+      - ./deploy-contracts/logs:/app/logs
+    networks:
+      - app-network
+
+  # 前端服务（带API代理）
+  frontend:
+    build:
+      context: ./quick-starts/react-quick-start
+      dockerfile: Dockerfile
+    container_name: xd-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80" # 只暴露前端端口
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

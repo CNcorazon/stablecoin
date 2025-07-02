@@ -10,9 +10,17 @@ const fs = require('fs');
 const app = express();
 
 app.use(cors({
-    origin: ['http://localhost:5173', 'http://localhost:3000', 'http://127.0.0.1:5173'],
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    origin: function (origin, callback) {
+        // 允许来自前端容器的请求（无origin）和外部请求
+        if (!origin || origin.includes('localhost') || process.env.NODE_ENV === 'production') {
+            callback(null, true);
+        } else {
+            callback(null, false);
+        }
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
 }));
 
 app.use(express.json());
@@ -1197,11 +1205,9 @@ app.get('/redemptions/history', (req, res) => {
 // 健康检查
 app.get('/health', (req, res) => {
     res.json({
-        status: 'healthy',
+        status: 'ok',
         timestamp: new Date().toISOString(),
-        service: 'XDStablecoin API Server',
-        supportedNetworks: Object.keys(NETWORK_CONFIGS),
-        version: '2.0.0'
+        service: 'XD Stablecoin Backend'
     });
 });
 

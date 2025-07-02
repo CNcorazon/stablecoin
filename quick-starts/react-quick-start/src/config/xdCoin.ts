@@ -101,7 +101,7 @@ export const BRIDGE_ABI = [
 // API 配置 - 增加更多端点
 export const API_CONFIG = {
     baseUrl: process.env.NODE_ENV === 'production'
-        ? "https://your-api-domain.com"
+        ? "api"
         : "http://localhost:3000",
 
     endpoints: {
