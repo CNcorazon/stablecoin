@@ -1,31 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { queryTransactionStatus } from '../config/api';
 
-// 🆕 交易状态查询函数
-const queryTransactionStatus = async (txHash: string, network: string) => {
-    const baseUrl = process.env.NODE_ENV === 'production'
-        ? "url"
-        : "http://localhost:3000";
-    const url = `${baseUrl}/tx/${txHash}?network=${network}`;
 
-    try {
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP Error: ${response.status}`);
-        }
-
-        const result = await response.json();
-        return result;
-    } catch (error) {
-        console.error('交易状态查询失败:', error);
-        throw error;
-    }
-};
 
 // 🆕 交易结果接口
 interface TransactionResult {

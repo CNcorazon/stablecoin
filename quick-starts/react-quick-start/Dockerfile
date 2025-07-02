@@ -1,6 +1,6 @@
 # web3auth-pnp-examples/quick-starts/react-quick-start/Dockerfile
 # 构建阶段
-FROM node:22.14.0-alpine as builder
+FROM node:22-alpine as builder
 
 WORKDIR /app
 

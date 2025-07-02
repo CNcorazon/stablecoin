@@ -9,12 +9,9 @@ services:
       dockerfile: Dockerfile
     container_name: xd-backend
     restart: unless-stopped
-    # 🔒 移除端口暴露，只在内部网络可访问
-    # ports:
-    #   - "3001:3001"  # 删除这行
     environment:
       - NODE_ENV=production
-      - PORT=3001
+      - PORT=3000
     env_file:
       - ./deploy-contracts/.env
     volumes:

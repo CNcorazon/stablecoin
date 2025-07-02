@@ -1,30 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAccount } from 'wagmi';
 import { getCurrentNetworkConfig, apiCall, API_CONFIG, queryBalance } from '../config/xdCoin';
+import { queryTransactionStatus } from '../config/api';
 
-// 🆕 交易状态查询函数
-const queryTransactionStatus = async (txHash: string, network: string) => {
-    const url = `${API_CONFIG.baseUrl}/tx/${txHash}?network=${network}`;
-
-    try {
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP Error: ${response.status}`);
-        }
-
-        const result = await response.json();
-        return result;
-    } catch (error) {
-        console.error('交易状态查询失败:', error);
-        throw error;
-    }
-};
 
 // 🆕 改进的交易结果弹窗组件
 interface TransactionModalProps {

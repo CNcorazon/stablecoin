@@ -2,7 +2,6 @@ const express = require("express");
 const cors = require("cors");
 const { ethers } = require("hardhat");
 require("dotenv/config");
-const { initContractPool, getContractFromPool } = require("./lib/contractPool");
 const axios = require("axios");
 const path = require('path');
 const fs = require('fs');
@@ -1348,14 +1347,6 @@ app.listen(PORT, '0.0.0.0', async () => {
 
     console.log(`\n💡 提示: 事件监听器需要单独启动:`);
     console.log(`   node event-monitor.js\n`);
-
-    // 初始化合约连接池
-    try {
-        await initContractPool();
-        console.log(`✅ 合约连接池初始化成功`);
-    } catch (error) {
-        console.error(`❌ 合约连接池初始化失败:`, error.message);
-    }
 });
 
 module.exports = app;

@@ -9,33 +9,8 @@ import {
     BRIDGE_ABI,
     queryAvailableBalance
 } from '../config/xdCoin';
+import { queryTransactionStatus } from '../config/api';
 
-// 🆕 使用与AdminPanel相同的交易查询函数
-const queryTransactionStatus = async (txHash: string, network: string) => {
-    const baseUrl = process.env.NODE_ENV === 'production'
-        ? "/api"
-        : "http://localhost:3000";
-    const url = `${baseUrl}/tx/${txHash}?network=${network}`;
-
-    try {
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error('查询交易状态失败:', error);
-        return null;
-    }
-};
 
 // 🆕 使用与AdminPanel相同的TransactionModal组件
 interface TransactionModalProps {
