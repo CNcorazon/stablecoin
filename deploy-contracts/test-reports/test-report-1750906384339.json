@@ -1,0 +1,113 @@
+{
+  "timestamp": "2025-06-26T02:53:04.014Z",
+  "testUserAddress": "0x340ED8A73959215C74dc0BF53959d9A80d8D4a46",
+  "network": {
+    "chainId": "11155111",
+    "name": "Sepolia"
+  },
+  "results": {
+    "basicFunctionality": {
+      "tokenInfo": {
+        "success": true,
+        "name": "XDStablecoin",
+        "symbol": "XD",
+        "decimals": "18",
+        "totalSupply": "100.0"
+      },
+      "mint": {
+        "success": true,
+        "amount": "1000.0",
+        "testUserBalance": "1100.0"
+      },
+      "transfer": {
+        "success": true,
+        "amount": "100.0",
+        "deployerBalance": "900.0",
+        "testUserBalance": "1200.0"
+      },
+      "approve": {
+        "success": true,
+        "approveAmount": "200.0",
+        "transferFromAmount": "50.0",
+        "remainingAllowance": "150.0"
+      },
+      "pause": {
+        "success": true,
+        "pauseSuccess": true,
+        "unpauseSuccess": true,
+        "transferFailedWhenPaused": true,
+        "finalPausedState": false
+      },
+      "blocklist": {
+        "success": true,
+        "blockSuccess": true,
+        "unblockSuccess": true,
+        "transferToBlockedFailed": true,
+        "finalBlockedState": {
+          "_type": "TransactionResponse",
+          "accessList": [],
+          "blockNumber": null,
+          "blockHash": null,
+          "blobVersionedHashes": null,
+          "chainId": "11155111",
+          "data": "0xe5962195000000000000000000000000340ed8a73959215c74dc0bf53959d9a80d8d4a46",
+          "from": "0xe196efB0166Fa2351a736047C0935Ac9C456421B",
+          "gasLimit": "24430",
+          "gasPrice": "3072224",
+          "hash": "0x9bdd31c6603b99b83261e069d8635b4f19e5ddc53f07aa0501fad743a90ce58e",
+          "maxFeePerGas": "3072224",
+          "maxPriorityFeePerGas": "1072958",
+          "maxFeePerBlobGas": null,
+          "nonce": 317,
+          "signature": {
+            "_type": "signature",
+            "networkV": null,
+            "r": "0x36f76ad69c1c98e3476fdd1caed67749878fee52fe17ee3a5f6565a89e597422",
+            "s": "0x3171cac7c33ac6721365920c1ba0c6c2a1870548e43f9faa8e1770ece592fc8c",
+            "v": 28
+          },
+          "to": "0x23251cC261550B27FbB53c8cb3505341705fFaEa",
+          "type": 2,
+          "value": "0"
+        }
+      },
+      "freeze": {
+        "success": true,
+        "freezeSuccess": true,
+        "unfreezeSuccess": true,
+        "freezeAmount": "300.0",
+        "finalAvailableBalance": "1250.0"
+      },
+      "burn": {
+        "success": true,
+        "burnAmount": "50.0",
+        "beforeBalance": "850.0",
+        "afterBalance": "800.0"
+      }
+    },
+    "crosschainFunctionality": {
+      "transfer": {
+        "success": true,
+        "messageId": "0x985e6afafffb87f7488441c4edf125da84286791f5311350e4dbe55d7b27abdb",
+        "transactionHash": "0x73a5c7764d6b9dc49b51fe03937dab2b41bd94246b11008c40ecb7878c20f983",
+        "transferAmount": "100.0",
+        "feeAmount": "0.000391874170749072",
+        "beforeBalance": "800.0",
+        "afterBalance": "700.0",
+        "targetNetwork": "BSC Testnet",
+        "sender": "0xe196...421B",
+        "receiver": "0xe196...421B"
+      }
+    },
+    "errors": [
+      {
+        "description": "暂停状态下转账（应该失败）",
+        "error": "execution reverted"
+      },
+      {
+        "description": "向黑名单用户转账（应该失败）",
+        "error": "execution reverted"
+      }
+    ]
+  }
+}

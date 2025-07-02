@@ -1,0 +1,40 @@
+{
+  "sepolia": {
+    "network": {
+      "name": "sepolia",
+      "chainId": "11155111"
+    },
+    "contracts": {
+      "accessManager": "0xf1c5d6dBC7229DcaEB2E828d7b7EE85C29074B52",
+      "token": "0x23251cC261550B27FbB53c8cb3505341705fFaEa",
+      "bridge": "0x8a1BC16541191A28103b050d8b93055aF5c06F0b"
+    },
+    "deployer": "0xe196efB0166Fa2351a736047C0935Ac9C456421B",
+    "deployedAt": "2025-06-26T02:37:42.540Z",
+    "permissionsConfigured": true,
+    "validated": true,
+    "crosschainConfigured": true,
+    "lastConfigured": "2025-06-26T02:41:04.468Z",
+    "configResults": {
+      "destinationChain": true,
+      "sourceChain": true,
+      "senderAllowlist": true
+    }
+  },
+  "bscTestnet": {
+    "network": {
+      "name": "bscTestnet",
+      "chainId": "97"
+    },
+    "contracts": {
+      "accessManager": "0x6a52bcA908FC39204EfcEF0e7204b2Bcb2a0e0be",
+      "token": "0x8924BC61E85315e8442f2feBDe2bd94231f9DeE0",
+      "bridge": "0x9D0c783314229D277e7e90ebAAd85078F9F4A9B2"
+    },
+    "deployer": "0xe196efB0166Fa2351a736047C0935Ac9C456421B",
+    "deployedAt": "2025-06-26T02:39:02.496Z",
+    "permissionsConfigured": true,
+    "validated": true,
+    "crosschainConfigured": true
+  }
+}
