@@ -206,7 +206,7 @@
 # }
 
 # 生产环境 - HTTPS配置
-app.106.75.231.187.sslip.io {
+app.165.154.152.16.sslip.io {
     # 安全头
     header {
         Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
@@ -225,7 +225,7 @@ app.106.75.231.187.sslip.io {
         
         # CORS处理（生产环境严格配置）
         header {
-            Access-Control-Allow-Origin "https://app.106.75.231.187.sslip.io"
+            Access-Control-Allow-Origin "https://app.165.154.152.16.sslip.io"
             Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS, PATCH"
             Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With, Accept, Origin"
             Access-Control-Allow-Credentials "true"
@@ -326,18 +326,18 @@ app.106.75.231.187.sslip.io {
 }
 
 # HTTP重定向到HTTPS
-http://app.106.75.231.187.sslip.io {
-    redir https://app.106.75.231.187.sslip.io{uri} permanent
+http://app.165.154.152.16.sslip.io {
+    redir https://app.165.154.152.16.sslip.io{uri} permanent
 }
 
 # 裸IP重定向到HTTPS域名
-http://106.75.231.187 {
-    redir https://app.106.75.231.187.sslip.io{uri} permanent
+http://165.154.152.16 {
+    redir https://app.165.154.152.16.sslip.io{uri} permanent
 }
 
 # 也处理HTTPS裸IP的访问
-106.75.231.187 {
-    redir https://app.106.75.231.187.sslip.io{uri} permanent
+165.154.152.16 {
+    redir https://app.165.154.152.16.sslip.io{uri} permanent
 }
 
 # 健康检查端点（内部使用，不对外暴露SSL）
