@@ -211,8 +211,8 @@ app.107.155.56.52.nip.io {
         X-Frame-Options SAMEORIGIN
         X-XSS-Protection "1; mode=block"
         Referrer-Policy strict-origin-when-cross-origin
-        # 更宽松的CSP配置
-        Content-Security-Policy "default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https: blob:; connect-src 'self' https: wss: data:; font-src 'self' data: https:; frame-src 'self' https:; worker-src 'self' blob:; child-src 'self' https:; object-src 'none'; media-src 'self' data: blob: https:;"
+        # 修复的CSP - 添加所有Web3Auth需要的域名
+        Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://auth.web3auth.io https://openlogin.com https://js.hcaptcha.com https://hcaptcha.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https: blob:; connect-src 'self' https: wss: data:; font-src 'self' data: https://fonts.gstatic.com; frame-src 'self' https://auth.web3auth.io https://openlogin.com https://wallet.web3auth.io https://hcaptcha.com https://*.hcaptcha.com; worker-src 'self' blob:; child-src 'self' https:; object-src 'none';"
     }
     
     # API代理配置
