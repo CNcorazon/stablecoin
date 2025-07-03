@@ -21,8 +21,7 @@ COPY --from=frontend-builder /app/dist /frontend/dist
 COPY Caddyfile /etc/caddy/Caddyfile
 
 # 创建日志目录
-RUN mkdir -p /var/log/caddy && \
-    chown -R caddy:caddy /var/log/caddy
+RUN mkdir -p /var/log/caddy
 
 # 健康检查
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \

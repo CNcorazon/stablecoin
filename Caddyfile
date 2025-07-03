@@ -3,8 +3,8 @@
     # 邮箱用于Let's Encrypt证书申请（生产环境需要）
     email xiading0109@163.com
     
-    # 开发环境关闭自动HTTPS
-    auto_https on
+    # 开发环境关闭自动HTTPS,注释即可启动自动HTTPS
+    # auto_https off
     
     # 日志配置
     log {
@@ -211,7 +211,8 @@ app.107.155.56.52.nip.io {
         X-Frame-Options DENY
         X-XSS-Protection "1; mode=block"
         Referrer-Policy strict-origin-when-cross-origin
-        Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://auth.web3auth.io https://openlogin.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https: wss:; font-src 'self' data:; frame-src 'self' https://auth.web3auth.io https://openlogin.com;"
+        # 更新CSP以支持Web3Auth的所有依赖
+        Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://auth.web3auth.io https://openlogin.com https://js.hcaptcha.com https://hcaptcha.com https://www.gstatic.com https://cdn.jsdelivr.net https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; img-src 'self' data: https: blob:; connect-src 'self' https: wss: data:; font-src 'self' data: https://fonts.gstatic.com https://cdn.jsdelivr.net; frame-src 'self' https://auth.web3auth.io https://openlogin.com https://hcaptcha.com https://*.hcaptcha.com; worker-src 'self' blob:; child-src 'self' https://auth.web3auth.io https://openlogin.com; object-src 'none'; media-src 'self' data: blob:;"
     }
     
     # API代理配置
@@ -238,9 +239,7 @@ app.107.155.56.52.nip.io {
         reverse_proxy backend:3000 {
             header_up Host {http.request.host}
             header_up X-Real-IP {http.request.remote.host}
-            header_up X-Forwarded-For {http.request.remote.host}
             header_up X-Forwarded-Proto https
-            header_up X-Forwarded-Host {http.request.host}
         }
     }
     
@@ -270,7 +269,7 @@ app.107.155.56.52.nip.io {
         path *.html
     }
     handle @html {
-        header Cache-Control "public, max-age=3600, must-revalidate"  # 1小时缓存
+        header Cache-Control "public, max-age=3600, must-revalidate"
         header Vary "Accept-Encoding"
         file_server {
             root /frontend/dist
@@ -338,18 +337,25 @@ http://107.155.56.52 {
     redir https://app.107.155.56.52.nip.io{uri} permanent
 }
 
-
-# 健康检查端点（可选）
+# 健康检查端点（内部使用，不对外暴露SSL）
 :8080 {
+    # 服务健康检查
     handle /health {
         respond "OK" 200
     }
     
+    # 详细状态信息
     handle /status {
         header Content-Type "application/json"
-        respond `{"status": "healthy", "service": "caddy"}` 200
+        respond `{
+            "status": "healthy",
+            "service": "caddy-frontend",
+            "timestamp": "{http.time_iso}",
+            "version": "2.7",
+            "environment": "production"
+        }` 200
     }
     
     # 默认响应
-    respond "Caddy Health Check" 200
+    respond "XD Stablecoin Wallet - Health Check Endpoint" 200
 }
