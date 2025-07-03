@@ -1,35 +1,33 @@
-# 第一阶段：构建前端
-FROM node:20-alpine AS frontend-builder
+# deploy-contracts/Dockerfile - 简化版
+FROM node:22-alpine
 
+# 设置工作目录
 WORKDIR /app
 
-# 复制package文件并安装依赖
-COPY quick-starts/react-quick-start/package*.json ./
-RUN npm ci --only=production && npm cache clean --force
+# 复制package文件
+COPY package*.json ./
 
-# 复制源码并构建
-COPY quick-starts/react-quick-start/ .
-RUN npm run build
+# 安装依赖
+RUN npm ci && npm cache clean --force
 
-# 第二阶段：Caddy + 前端
-FROM caddy:2.7-alpine
-
-# 从构建阶段复制前端文件
-COPY --from=frontend-builder /app/dist /frontend/dist
-
-# 复制Caddy配置
-COPY Caddyfile /etc/caddy/Caddyfile
+# 复制源代码
+COPY . .
 
 # 创建日志目录
-RUN mkdir -p /var/log/caddy && \
-    chown -R caddy:caddy /var/log/caddy
+RUN mkdir -p logs
 
-# 健康检查
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD caddy version || exit 1
+# 设置用户权限
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nodejs -u 1001 && \
+    chown -R nodejs:nodejs /app
+USER nodejs
 
 # 暴露端口
-EXPOSE 80 443 8080
+EXPOSE 3000
 
-# 启动Caddy
-CMD ["caddy", "run", "--config", "/etc/caddy/Caddyfile"]
+# 简化的健康检查（使用Node.js）
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD node -e "require('http').get('http://localhost:3000/health', (res) => process.exit(res.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"
+
+# 启动命令
+CMD ["node", "app-v2.js"]
