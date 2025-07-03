@@ -1,0 +1,355 @@
+# 全局配置块
+{
+    # 邮箱用于Let's Encrypt证书申请（生产环境需要）
+    email xiading0109@163.com
+    
+    # 开发环境关闭自动HTTPS
+    auto_https on
+    
+    # 日志配置
+    log {
+        level INFO
+    }
+}
+
+# # 开发/测试环境 - HTTP配置
+# :80 {
+#     # 基本信息
+#     header Server "XD-Stablecoin-Wallet"
+    
+#     # 安全头（即使是HTTP也建议加上）
+#     header {
+#         X-Content-Type-Options nosniff
+#         X-Frame-Options DENY
+#         X-XSS-Protection "1; mode=block"
+#         Referrer-Policy strict-origin-when-cross-origin
+#     }
+    
+#     # API代理配置
+#     handle /api/* {
+#         # 移除/api前缀
+#         uri strip_prefix /api
+        
+#         # CORS处理（在代理之前设置）
+#         header {
+#             Access-Control-Allow-Origin "*"
+#             Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS, PATCH"
+#             Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With, Accept, Origin"
+#             Access-Control-Allow-Credentials "true"
+#             Access-Control-Max-Age "86400"
+#         }
+        
+#         # OPTIONS预检请求处理
+#         @options method OPTIONS
+#         handle @options {
+#             respond "" 204
+#         }
+        
+#         # 其他请求代理到后端
+#         reverse_proxy backend:3000 {
+#             header_up Host {http.request.host}
+#             header_up X-Real-IP {http.request.remote.host}
+#         }
+#     }
+    
+#     # WebSocket支持（如果需要）
+#     handle /ws/* {
+#         reverse_proxy backend:3000
+#     }
+    
+#     # 静态资源缓存策略
+#     @static {
+#         path *.js *.css *.woff *.woff2 *.ttf *.eot *.ico *.png *.jpg *.jpeg *.gif *.svg *.webp *.avif
+#     }
+#     handle @static {
+#         header Cache-Control "public, max-age=31536000, immutable"
+#         header Vary "Accept-Encoding"
+#         file_server {
+#             root /frontend/dist
+#         }
+#     }
+    
+#     # HTML文件缓存策略
+#     @html {
+#         path *.html
+#     }
+#     handle @html {
+#         header Cache-Control "public, max-age=0, must-revalidate"
+#         file_server {
+#             root /frontend/dist
+#         }
+#     }
+    
+#     # 主要前端文件服务
+#     handle {
+#         root * /frontend/dist
+        
+#         # Gzip压缩
+#         encode gzip
+        
+#         # SPA路由处理 - 所有非API请求都返回index.html
+#         try_files {path} {path}/ /index.html
+        
+#         file_server
+#     }
+    
+#     # 错误处理
+#     handle_errors {
+#         @404 expression {http.error.status_code} == 404
+#         @500 expression {http.error.status_code} >= 500
+        
+#         # 404错误返回前端应用（SPA路由处理）
+#         handle @404 {
+#             rewrite * /index.html
+#             file_server {
+#                 root /frontend/dist
+#             }
+#         }
+        
+#         # 5xx错误返回JSON
+#         handle @500 {
+#             header Content-Type "application/json"
+#             respond `{"error": "Internal Server Error", "status": {http.error.status_code}}` {http.error.status_code}
+#         }
+#     }
+    
+#     # 访问日志
+#     log {
+#         output file /var/log/caddy/access-http.log {
+#             roll_size 50mb
+#             roll_keep 5
+#         }
+#         format json
+#     }
+# }
+
+# 生产环境 - HTTPS配置（注释掉，需要时启用）
+# yourdomain.com {
+#     # 安全头
+#     header {
+#         Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+#         X-Content-Type-Options nosniff
+#         X-Frame-Options DENY
+#         X-XSS-Protection "1; mode=block"
+#         Referrer-Policy strict-origin-when-cross-origin
+#         Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https:; font-src 'self' data:;"
+#     }
+#     
+#     # API代理
+#     handle /api/* {
+#         uri strip_prefix /api
+#         reverse_proxy backend:3000 {
+#             header_up Host {http.request.host}
+#             header_up X-Real-IP {http.request.remote.host}
+#             header_up X-Forwarded-For {http.request.remote.host}
+#             header_up X-Forwarded-Proto https
+#             header_up X-Forwarded-Host {http.request.host}
+#             timeout 60s
+#             health_uri /health
+#             health_interval 30s
+#         }
+#         
+#         header {
+#             Access-Control-Allow-Origin "https://yourdomain.com"
+#             Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+#             Access-Control-Allow-Headers "Content-Type, Authorization"
+#             Access-Control-Allow-Credentials "true"
+#         }
+#         
+#         @options method OPTIONS
+#         respond @options "" 204
+#     }
+#     
+#     # 静态资源
+#     @static {
+#         path *.js *.css *.woff *.woff2 *.ttf *.eot *.ico *.png *.jpg *.jpeg *.gif *.svg
+#     }
+#     handle @static {
+#         header Cache-Control "public, max-age=31536000, immutable"
+#         file_server {
+#             root /frontend/dist
+#         }
+#     }
+#     
+#     # 前端应用
+#     handle {
+#         root * /frontend/dist
+#         encode gzip
+#         try_files {path} /index.html
+#         file_server
+#     }
+#     
+#     # 错误处理
+#     handle_errors {
+#         @404 expression {http.error.status_code} == 404
+#         handle @404 {
+#             rewrite * /index.html
+#             file_server {
+#                 root /frontend/dist
+#             }
+#         }
+#     }
+#     
+#     # HTTPS访问日志
+#     log {
+#         output file /var/log/caddy/access-https.log
+#         format json
+#     }
+# }
+
+# 重定向HTTP到HTTPS（生产环境启用）
+# http://yourdomain.com {
+#     redir https://yourdomain.com{uri} permanent
+# }
+
+# 生产环境 - HTTPS配置
+app.107.155.56.52.nip.io {
+    # 安全头
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        X-Content-Type-Options nosniff
+        X-Frame-Options DENY
+        X-XSS-Protection "1; mode=block"
+        Referrer-Policy strict-origin-when-cross-origin
+        Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://auth.web3auth.io https://openlogin.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https: wss:; font-src 'self' data:; frame-src 'self' https://auth.web3auth.io https://openlogin.com;"
+    }
+    
+    # API代理配置
+    handle /api/* {
+        # 移除/api前缀
+        uri strip_prefix /api
+        
+        # CORS处理（生产环境严格配置）
+        header {
+            Access-Control-Allow-Origin "https://app.107.155.56.52.nip.io"
+            Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS, PATCH"
+            Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With, Accept, Origin"
+            Access-Control-Allow-Credentials "true"
+            Access-Control-Max-Age "86400"
+        }
+        
+        # OPTIONS预检请求处理
+        @options method OPTIONS
+        handle @options {
+            respond "" 204
+        }
+        
+        # 代理到后端
+        reverse_proxy backend:3000 {
+            header_up Host {http.request.host}
+            header_up X-Real-IP {http.request.remote.host}
+            header_up X-Forwarded-For {http.request.remote.host}
+            header_up X-Forwarded-Proto https
+            header_up X-Forwarded-Host {http.request.host}
+        }
+    }
+    
+    # WebSocket支持（如果需要）
+    handle /ws/* {
+        reverse_proxy backend:3000 {
+            header_up Host {http.request.host}
+            header_up X-Real-IP {http.request.remote.host}
+            header_up X-Forwarded-Proto https
+        }
+    }
+    
+    # 静态资源缓存策略（生产优化）
+    @static {
+        path *.js *.css *.woff *.woff2 *.ttf *.eot *.ico *.png *.jpg *.jpeg *.gif *.svg *.webp *.avif
+    }
+    handle @static {
+        header Cache-Control "public, max-age=31536000, immutable"
+        header Vary "Accept-Encoding"
+        file_server {
+            root /frontend/dist
+        }
+    }
+    
+    # HTML文件缓存策略
+    @html {
+        path *.html
+    }
+    handle @html {
+        header Cache-Control "public, max-age=3600, must-revalidate"  # 1小时缓存
+        header Vary "Accept-Encoding"
+        file_server {
+            root /frontend/dist
+        }
+    }
+    
+    # 主要前端文件服务
+    handle {
+        root * /frontend/dist
+        
+        # Gzip压缩
+        encode {
+            gzip 6
+            minimum_length 1000
+        }
+        
+        # SPA路由处理
+        try_files {path} {path}/ /index.html
+        
+        file_server
+    }
+    
+    # 错误处理
+    handle_errors {
+        @404 expression {http.error.status_code} == 404
+        @500 expression {http.error.status_code} >= 500
+        
+        # 404错误返回前端应用（SPA路由处理）
+        handle @404 {
+            rewrite * /index.html
+            file_server {
+                root /frontend/dist
+            }
+        }
+        
+        # 5xx错误返回JSON
+        handle @500 {
+            header Content-Type "application/json"
+            respond `{"error": "Internal Server Error", "status": {http.error.status_code}, "timestamp": "{http.time_iso}"}` {http.error.status_code}
+        }
+    }
+    
+    # 生产环境访问日志
+    log {
+        output file /var/log/caddy/access-https.log {
+            roll_size 100mb
+            roll_keep 10
+        }
+        format json
+    }
+}
+
+# HTTP重定向到HTTPS
+http://app.107.155.56.52.nip.io {
+    redir https://app.107.155.56.52.nip.io{uri} permanent
+}
+
+# 裸IP重定向到HTTPS域名
+http://107.155.56.52 {
+    redir https://app.107.155.56.52.nip.io{uri} permanent
+}
+
+# 也处理HTTPS裸IP的访问
+107.155.56.52 {
+    redir https://app.107.155.56.52.nip.io{uri} permanent
+}
+
+
+# 健康检查端点（可选）
+:8080 {
+    handle /health {
+        respond "OK" 200
+    }
+    
+    handle /status {
+        header Content-Type "application/json"
+        respond `{"status": "healthy", "service": "caddy"}` 200
+    }
+    
+    # 默认响应
+    respond "Caddy Health Check" 200
+}

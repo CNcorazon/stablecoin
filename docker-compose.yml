@@ -1,8 +1,6 @@
-# web3auth-pnp-examples/docker-compose.yml
 version: '3.8'
 
 services:
-  # 后端服务（仅内部访问）
   backend:
     build:
       context: ./deploy-contracts
@@ -18,21 +16,53 @@ services:
       - ./deploy-contracts/logs:/app/logs
     networks:
       - app-network
+    healthcheck:
+      test: [ "CMD", "node", "-e", "require('http').get('http://localhost:3000/health', (res) => process.exit(res.statusCode === 200 ? 0 : 1))" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
-  # 前端服务（带API代理）
-  frontend:
+  caddy-frontend:
     build:
-      context: ./quick-starts/react-quick-start
-      dockerfile: Dockerfile
-    container_name: xd-frontend
+      context: .
+      dockerfile: Dockerfile.caddy
+    container_name: xd-caddy-frontend
     restart: unless-stopped
     ports:
-      - "80:80" # 只暴露前端端口
+      - "80:80"
+      - "443:443"
+      - "8080:8080" # 健康检查端口
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+      - caddy_logs:/var/log/caddy # 日志持久化
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     networks:
       - app-network
+    healthcheck:
+      test: [ "CMD", "caddy", "version" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    # 资源限制（生产环境建议）
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
 
 networks:
   app-network:
     driver: bridge
+
+volumes:
+  caddy_data:
+    driver: local
+  caddy_config:
+    driver: local
+  caddy_logs:
+    # 新增日志卷
+    driver: local
