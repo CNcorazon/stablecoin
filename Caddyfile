@@ -3,6 +3,9 @@
     # 邮箱用于Let's Encrypt证书申请（生产环境需要）
     email xiading0109@163.com
     
+    # 使用ZeroSSL替代Let's Encrypt
+    acme_ca https://acme.zerossl.com/v2/DV90
+    
     # 开发环境关闭自动HTTPS,注释即可启动自动HTTPS
     # auto_https off
     
@@ -203,7 +206,7 @@
 # }
 
 # 生产环境 - HTTPS配置
-app.106.75.231.187.nip.io {
+app.106.75.231.187.sslip.io {
     # 安全头
     header {
         Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
@@ -222,7 +225,7 @@ app.106.75.231.187.nip.io {
         
         # CORS处理（生产环境严格配置）
         header {
-            Access-Control-Allow-Origin "https://app.106.75.231.187.nip.io"
+            Access-Control-Allow-Origin "https://app.106.75.231.187.sslip.io"
             Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS, PATCH"
             Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With, Accept, Origin"
             Access-Control-Allow-Credentials "true"
@@ -323,18 +326,18 @@ app.106.75.231.187.nip.io {
 }
 
 # HTTP重定向到HTTPS
-http://app.106.75.231.187.nip.io {
-    redir https://app.106.75.231.187.nip.io{uri} permanent
+http://app.106.75.231.187.sslip.io {
+    redir https://app.106.75.231.187.sslip.io{uri} permanent
 }
 
 # 裸IP重定向到HTTPS域名
 http://106.75.231.187 {
-    redir https://app.106.75.231.187.nip.io{uri} permanent
+    redir https://app.106.75.231.187.sslip.io{uri} permanent
 }
 
 # 也处理HTTPS裸IP的访问
 106.75.231.187 {
-    redir https://app.106.75.231.187.nip.io{uri} permanent
+    redir https://app.106.75.231.187.sslip.io{uri} permanent
 }
 
 # 健康检查端点（内部使用，不对外暴露SSL）
